@@ -35,3 +35,4 @@ A static website built around fluid animation. No frameworks, no build step, ser
 - The sim is re-seeded when the aspect ratio changes (rotate/resize), so it never goes blank
 - Verified in headless Chromium (SwiftShader software GL, ~5 fps there; a real GPU runs 60 fps). No console errors, 0px horizontal overflow on mobile
 - Port changed to 4173: the user's machine already has an LLM router (nvidia-nim + groq) on 8080
+- Prepared git repo (main, .nojekyll) for GitHub Pages; repo creation blocked by permission check, awaiting user
