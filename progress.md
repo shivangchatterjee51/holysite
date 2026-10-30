@@ -36,3 +36,4 @@ A static website built around fluid animation. No frameworks, no build step, ser
 - Verified in headless Chromium (SwiftShader software GL, ~5 fps there; a real GPU runs 60 fps). No console errors, 0px horizontal overflow on mobile
 - Port changed to 4173: the user's machine already has an LLM router (nvidia-nim + groq) on 8080
 - Prepared git repo (main, .nojekyll) for GitHub Pages; repo creation blocked by permission check, awaiting user
+- Pushed to https://github.com/shivangchatterjee51/holysite (main). Pages API blocked from session; user must enable Pages: Settings → Pages → Deploy from branch main / (root). URL: https://shivangchatterjee51.github.io/holysite/
