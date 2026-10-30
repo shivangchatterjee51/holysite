@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow Field Notes</title>
+<meta name="description" content="A short field guide to fluids, told over a real-time Navier–Stokes simulation running under the page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="fluid" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="liquid" x="-10%" y="-30%" width="120%" height="160%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.02" numOctaves="1" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="40" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="goo">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b"/>
+    <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -11"/>
+  </filter>
+</svg>
+
+<header class="bar mono">
+  <a href="#top" class="brand">Flow<span>/</span>Field notes</a>
+  <span class="hide-sm">Vol. III · Hydrodynamics</span>
+  <span class="live"><span>v <b id="v-read">0.00</b></span><span>Re <b id="re-read">2,300</b></span></span>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <p class="mono hero-note" data-reveal>Fig. 01 — The fluid behind this page is being solved as you read. Move. You are a source term.</p>
+    <h1 class="hero-title sk" aria-label="Everything flows.">
+      <span class="line"><span>Everything</span></span>
+      <span class="line"><span><em>flows.</em></span></span>
+    </h1>
+    <div class="hero-foot mono">
+      <span>Navier–Stokes · 128² velocity grid · 20 Jacobi passes / frame</span>
+      <span class="scroll-cue">Scroll <i></i></span>
+    </div>
+  </section>
+
+  <section class="intro">
+    <p class="lede sk" data-split>Πάντα ῥεῖ. Heraclitus said it two and a half thousand years before anyone could write down the equation. This is a short field guide to the stuff that won't hold still — water, smoke, honey, ink, the air moving over your keyboard — told on top of a real fluid that is running underneath the words.</p>
+  </section>
+
+  <section class="chapter" id="viscosity">
+    <div class="num mono">§ 01<br><span>Viscosity</span></div>
+    <div class="body">
+      <h2 class="sk" data-split>Honey remembers. <em>Water forgets.</em></h2>
+      <p data-reveal>Viscosity is a fluid's internal friction: how quickly a push gets shared with the neighbours and lost as heat. Thick fluids smother motion before it can go anywhere. Thin ones let it run, and run, and break apart into eddies. Drag the slider and the water under this text changes its mind.</p>
+      <div class="panel mono" data-reveal>
+        <label for="visc">Viscosity <output id="visc-out">0.35</output></label>
+        <input type="range" id="visc" min="0" max="1" step="0.01" value="0.35">
+        <div class="scale"><span>Water</span><span>Oil</span><span>Honey</span></div>
+        <p class="regime">Reynolds ≈ <b id="re-big">2,300</b> — <span id="regime">transitional</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter right" id="vorticity">
+    <div class="num mono">§ 02<br><span>Vorticity</span></div>
+    <div class="body">
+      <h2 class="sk" data-split>Every eddy is the memory <em>of a push.</em></h2>
+      <p data-reveal>Spin is hard to kill. A swirl in a basin outlives the hand that made it, folding dye into thinner and thinner filaments until the eye gives up following. The solver here hands a little of the lost spin back every frame — vorticity confinement — which is why the curls stay sharp instead of going to mush.</p>
+      <div class="panel mono" data-reveal>
+        <label for="curl">Curl <output id="curl-out">26</output></label>
+        <input type="range" id="curl" min="0" max="60" step="1" value="26">
+        <div class="scale"><span>Smoke</span><span>Ink</span><span>Storm</span></div>
+        <button id="ring" class="btn">Fire a vortex ring <span>↑</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="liquid-type" aria-label="Viscous">
+    <p class="mono cap">Fig. 04 — Type set in a medium with Re ≈ 40</p>
+    <div class="liquid-word" id="liquid-word">viscous</div>
+  </section>
+
+  <section class="chapter" id="tension">
+    <div class="num mono">§ 03<br><span>Surface tension</span></div>
+    <div class="body">
+      <h2 class="sk" data-split>The skin <em>on the water.</em></h2>
+      <p data-reveal>Where a liquid meets air, its molecules pull inward and the surface behaves like a stretched membrane. It is why droplets round themselves off, why two of them reach for each other and merge, and why a pond skater can stand on a pond.</p>
+    </div>
+    <div class="goo-wrap" data-reveal>
+      <div class="goo" id="drops"></div>
+      <p class="mono cap">Fig. 05 — Bring the cursor close. Droplets coalesce.</p>
+    </div>
+  </section>
+
+  <section class="chapter right" id="diffusion">
+    <div class="num mono">§ 04<br><span>Diffusion</span></div>
+    <div class="body">
+      <h2 class="sk" data-split>Ink is a slow argument <em>with water.</em></h2>
+      <p data-reveal>Drop pigment into a still glass and it barely spreads; molecular diffusion is glacially slow. Stir once and it is everywhere in seconds. Mixing is almost entirely the work of motion, not of time. Pick a pigment and stir.</p>
+      <div class="panel mono" data-reveal>
+        <span class="label">Pigment</span>
+        <div class="swatches" id="swatches"></div>
+        <button id="still" class="btn">Still the water <span>○</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee sk" aria-hidden="true"><div class="track" id="track"></div></div>
+
+  <footer class="foot">
+    <h2 class="sk" data-split>Nothing here <em>stays still.</em></h2>
+    <div class="foot-grid mono">
+      <span>One static page. WebGL2, no framework, no images.</span>
+      <span>Set in Instrument Serif &amp; JetBrains Mono.</span>
+      <a href="#top" class="btn">Back to the surface <span>↑</span></a>
+    </div>
+  </footer>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
